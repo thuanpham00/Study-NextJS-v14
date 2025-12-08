@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 7, "column": 0}, "map": {"version":3,"sources":["file:///E:/VS_CODE/NextJS/setup-du-an-nextjs/client/src/app/me/profile.tsx"],"sourcesContent":["\"use client\";\r\nimport { useAppContext } from \"@/app/AppProvider\";\r\nimport envConfig from \"@/config\";\r\nimport React, { useEffect } from \"react\";\r\n\r\nexport default function Profile() {\r\n  const { sessionToken } = useAppContext();\r\n  useEffect(() => {\r\n    const fetchReq = async () => {\r\n      const result =  await accountApi.me(sessionToken?.value || \"\");\r\n    };\r\n    fetchReq();\r\n  }, [sessionToken]);\r\n\r\n  return <div>profile</div>;\r\n}\r\n"],"names":[],"mappings":";;;;AACA;AAEA;AAHA;;;;AAKe,SAAS;IACtB,MAAM,EAAE,YAAY,EAAE,GAAG,CAAA,GAAA,0HAAA,CAAA,gBAAa,AAAD;IACrC,CAAA,GAAA,qMAAA,CAAA,YAAS,AAAD,EAAE;QACR,MAAM,WAAW;YACf,MAAM,SAAU,MAAM,WAAW,EAAE,CAAC,cAAc,SAAS;QAC7D;QACA;IACF,GAAG;QAAC;KAAa;IAEjB,qBAAO,8OAAC;kBAAI;;;;;;AACd","debugId":null}}]
+}

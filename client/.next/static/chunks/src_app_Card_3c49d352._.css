@@ -1,0 +1,23 @@
+/* [project]/src/app/Card/card.css [app-client] (css) */
+.card {
+  background-color: #f2f2f2;
+  border: 1px solid #000;
+  border-radius: 1rem;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  padding: 1rem;
+  transition: all .3s;
+  display: flex;
+}
+
+
+/* [project]/src/app/Card/custom.module.scss.module.css [app-client] (css) */
+.custom-module-scss-module__0M5pXa__card {
+  padding: 3rem;
+}
+
+
+/*# sourceMappingURL=src_app_Card_3c49d352._.css.map*/

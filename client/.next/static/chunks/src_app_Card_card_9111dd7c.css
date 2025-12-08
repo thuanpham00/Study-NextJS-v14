@@ -1,0 +1,17 @@
+/* [project]/src/app/Card/card.css [app-client] (css) */
+.card {
+  background-color: #f2f2f2;
+  border: 1px solid #000;
+  border-radius: 1rem;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  padding: 1rem;
+  transition: all .3s;
+  display: flex;
+}
+
+
+/*# sourceMappingURL=src_app_Card_card_9111dd7c.css.map*/

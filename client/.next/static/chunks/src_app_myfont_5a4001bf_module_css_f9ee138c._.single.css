@@ -1,0 +1,22 @@
+/* [project]/src/app/myfont_5a4001bf.module.css [app-client] (css) */
+@font-face {
+  font-family: myFont;
+  src: url("../media/OpenSans_Medium-s.p.1d815ccf.ttf") format("truetype");
+  font-display: swap;
+  font-weight: 500;
+}
+
+@font-face {
+  font-family: myFont Fallback;
+  src: local(Arial);
+  ascent-override: 99.63%;
+  descent-override: 27.31%;
+  line-gap-override: 0.0%;
+  size-adjust: 107.28%;
+}
+
+.myfont_5a4001bf-module__2YvGcW__className {
+  font-family: myFont, myFont Fallback;
+}
+
+/*# sourceMappingURL=src_app_myfont_5a4001bf_module_css_f9ee138c._.single.css.map*/
