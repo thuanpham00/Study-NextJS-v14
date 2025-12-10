@@ -1,6 +1,7 @@
 export async function POST(request: Request) {
   const res = await request.json();
   const sessionToken = res.sessionToken as string;
+  const expiresAt = res.expiresAt as string;
   if (!sessionToken) {
     return Response.json(
       { message: "Không nhận được session" },
@@ -9,10 +10,11 @@ export async function POST(request: Request) {
       }
     );
   }
+  const expiresDate = new Date(expiresAt).toUTCString();
   return Response.json(res, {
     status: 200,
     headers: {
-      "Set-Cookie": `sessionToken=${sessionToken}; Path=/; httpOnly`, // set token vô server next - cookie này thuộc về client next
+      "Set-Cookie": `sessionToken=${sessionToken}; Path=/; HttpOnly; Expires=${expiresDate};`, // cookie này thuộc về next client
     },
   });
 }

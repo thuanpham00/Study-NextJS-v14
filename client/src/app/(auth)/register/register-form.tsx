@@ -35,6 +35,7 @@ export default function RegisterForm() {
       toast.success("Register is Successfully!!");
       await authApi.auth({
         sessionToken: result.payload.data.token,
+        expiresAt: result.payload.data.expiresAt,
       });
       router.push("/me");
       clientSessionToken.value = result.payload.data.token;

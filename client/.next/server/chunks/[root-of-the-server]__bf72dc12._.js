@@ -124,6 +124,7 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$utils$2e$ts__$
 ;
 ;
 const ENTITY_ERROR_STATUS = 422;
+const AUTHENTICATION_ERROR_STATUS = 401;
 class HttpError extends Error {
     status;
     payload;
@@ -184,6 +185,12 @@ const request = async (method, url, options)=>{
     if (!res.ok) {
         if (res.status === ENTITY_ERROR_STATUS) {
             throw new EntityError(data);
+        } else if (res.status === AUTHENTICATION_ERROR_STATUS) {
+            // xử lý token hết hạn hoặc ko hợp lệ thì logout - xử lý ở client
+            if ("TURBOPACK compile-time falsy", 0) {
+                "TURBOPACK unreachable";
+            // location.href = "/login";
+            }
         } else {
             throw new HttpError(data);
         }
@@ -243,16 +250,17 @@ const authApi = {
     register: (body)=>{
         return __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$http$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["default"].post("/auth/register", body);
     },
-    auth: (body)=>{
-        return __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$http$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["default"].post("/api/auth", body, {
-            baseUrl: ""
-        });
-    },
     logoutFromNextServerToServer: (sessionToken)=>{
         return __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$http$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["default"].post("/auth/logout", {}, {
             headers: {
                 Authorization: `Bearer ${sessionToken}`
             }
+        });
+    },
+    // route handler
+    auth: (body)=>{
+        return __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$http$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["default"].post("/api/auth", body, {
+            baseUrl: ""
         });
     },
     logoutFromNextClientToNextServer: ()=>{
@@ -285,7 +293,22 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$head
 ;
 ;
 ;
-async function POST() {
+async function POST(request) {
+    const res = await request.json();
+    const force = res.force;
+    if (force) {
+        // khi token hết hạn hoặc ko hợp lệ từ client gửi lên -> buộc đăng xuất
+        return Response.json({
+            message: "Buộc đăng xuất thành công"
+        }, {
+            status: 200,
+            headers: {
+                // xóa cookie sessionToken
+                "Set-Cookie": `sessionToken=; Path=/; HttpOnly; Max-Age=0`
+            }
+        });
+    }
+    // khi token vẫn còn hạn sử dụng logout bình thường
     const cookieStore = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$headers$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["cookies"])();
     const sessionToken = (await cookieStore).get("sessionToken");
     if (!sessionToken) {

@@ -56,6 +56,7 @@ __turbopack_context__.s({
 async function POST(request) {
     const res = await request.json();
     const sessionToken = res.sessionToken;
+    const expiresAt = res.expiresAt;
     if (!sessionToken) {
         return Response.json({
             message: "Không nhận được session"
@@ -63,10 +64,11 @@ async function POST(request) {
             status: 400
         });
     }
+    const expiresDate = new Date(expiresAt).toUTCString();
     return Response.json(res, {
         status: 200,
         headers: {
-            "Set-Cookie": `sessionToken=${sessionToken}; Path=/; httpOnly`
+            "Set-Cookie": `sessionToken=${sessionToken}; Path=/; HttpOnly; Expires=${expiresDate};`
         }
     });
 }

@@ -64,6 +64,7 @@ var { g: global, __dirname, k: __turbopack_refresh__, m: module } = __turbopack_
 {
 /* eslint-disable @typescript-eslint/no-explicit-any */ __turbopack_context__.s({
     "cn": (()=>cn),
+    "decodeJWT": (()=>decodeJWT),
     "handleErrorApi": (()=>handleErrorApi),
     "normalizePath": (()=>normalizePath)
 });
@@ -71,6 +72,8 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$http$2e$ts__$5
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$clsx$2f$dist$2f$clsx$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/clsx/dist/clsx.mjs [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$sonner$2f$dist$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/sonner/dist/index.mjs [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$tailwind$2d$merge$2f$dist$2f$bundle$2d$mjs$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/tailwind-merge/dist/bundle-mjs.mjs [app-client] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$jsonwebtoken$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/jsonwebtoken/index.js [app-client] (ecmascript)");
+;
 ;
 ;
 ;
@@ -96,6 +99,9 @@ const handleErrorApi = ({ errors, setError, duration })=>{
 const normalizePath = (path)=>{
     return path.startsWith("/") ? path.slice(1) : `/${path}`;
 };
+const decodeJWT = (token)=>{
+    return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$jsonwebtoken$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].decode(token);
+};
 if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelpers !== null) {
     __turbopack_context__.k.registerExports(module, globalThis.$RefreshHelpers$);
 }
@@ -113,9 +119,12 @@ var { g: global, __dirname, k: __turbopack_refresh__, m: module } = __turbopack_
 });
 var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$config$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/config.ts [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$utils$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/lib/utils.ts [app-client] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/navigation.js [app-client] (ecmascript)");
+;
 ;
 ;
 const ENTITY_ERROR_STATUS = 422;
+const AUTHENTICATION_ERROR_STATUS = 401;
 class HttpError extends Error {
     status;
     payload;
@@ -139,6 +148,7 @@ class EntityError extends HttpError {
 }
 class ClientSessionToken {
     token = "";
+    _expiresAt = new Date().toISOString();
     get value() {
         return this.token;
     }
@@ -148,6 +158,15 @@ class ClientSessionToken {
             "TURBOPACK unreachable";
         }
         this.token = token;
+    }
+    get expiresAt() {
+        return this._expiresAt;
+    }
+    set expiresAt(expiresAt) {
+        if ("TURBOPACK compile-time falsy", 0) {
+            "TURBOPACK unreachable";
+        }
+        this._expiresAt = expiresAt;
     }
 }
 const clientSessionToken = new ClientSessionToken();
@@ -173,9 +192,29 @@ const request = async (method, url, options)=>{
         status: res.status,
         payload
     };
+    // chỉ có next client mới gọi được tới next server và lấy được cookie ra
     if (!res.ok) {
         if (res.status === ENTITY_ERROR_STATUS) {
             throw new EntityError(data);
+        } else if (res.status === AUTHENTICATION_ERROR_STATUS) {
+            // xử lý token hết hạn hoặc ko hợp lệ thì logout - xử lý ở client
+            if ("TURBOPACK compile-time truthy", 1) {
+                // case token hết hạn hoặc ko hợp lệ -> xóa token ở client
+                await fetch("/api/auth/logout", {
+                    method: "POST",
+                    body: JSON.stringify({
+                        force: true
+                    }),
+                    headers: {
+                        ...baseHeaders
+                    }
+                });
+                clientSessionToken.value = "";
+                clientSessionToken.expiresAt = new Date().toISOString();
+                location.href = "/login"; // gọi theo kiểu client - reload trang
+            } else {
+                "TURBOPACK unreachable";
+            }
         } else {
             throw new HttpError(data);
         }
@@ -187,8 +226,10 @@ const request = async (method, url, options)=>{
             "/auth/register"
         ].some((item)=>item === (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$utils$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["normalizePath"])(url))) {
             clientSessionToken.value = payload.data.token;
+            clientSessionToken.expiresAt = payload.data.expiresAt;
         } else if ("/auth/logout" === (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$utils$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["normalizePath"])(url)) {
             clientSessionToken.value = "";
+            clientSessionToken.expiresAt = new Date().toISOString();
         }
     }
     return data;
@@ -238,11 +279,6 @@ const authApi = {
     register: (body)=>{
         return __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$http$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].post("/auth/register", body);
     },
-    auth: (body)=>{
-        return __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$http$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].post("/api/auth", body, {
-            baseUrl: ""
-        });
-    },
     logoutFromNextServerToServer: (sessionToken)=>{
         return __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$http$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].post("/auth/logout", {}, {
             headers: {
@@ -250,8 +286,28 @@ const authApi = {
             }
         });
     },
-    logoutFromNextClientToNextServer: ()=>{
-        return __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$http$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].post("/api/auth/logout", null, {
+    slideSessionFromNextServerToServer: (sessionToken)=>{
+        return __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$http$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].post("/auth/slide-session", {}, {
+            headers: {
+                Authorization: `Bearer ${sessionToken}`
+            }
+        });
+    },
+    // route handler
+    auth: (body)=>{
+        return __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$http$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].post("/api/auth", body, {
+            baseUrl: ""
+        });
+    },
+    logoutFromNextClientToNextServer: (force)=>{
+        return __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$http$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].post("/api/auth/logout", {
+            force
+        }, {
+            baseUrl: ""
+        });
+    },
+    slideSessionFromNextClientToNextServer: ()=>{
+        return __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$http$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].post("/api/auth/slide-session", {}, {
             baseUrl: ""
         });
     }

@@ -45,10 +45,10 @@ export default async function authRoutes(fastify: FastifyInstance, options: Fast
           .setCookie('sessionToken', session.token, {
             path: '/',
             httpOnly: true,
-            secure: false,
+            secure: envConfig.IS_PRODUCTION,
             expires: session.expiresAt,
-            sameSite: 'strict',
-            // domain: envConfig.DOMAIN
+            sameSite: envConfig.IS_PRODUCTION ? 'none' : 'lax',
+            domain: envConfig.IS_PRODUCTION ? envConfig.DOMAIN : undefined
           })
           .send({
             message: 'Đăng ký thành công',
@@ -81,17 +81,19 @@ export default async function authRoutes(fastify: FastifyInstance, options: Fast
       preValidation: fastify.auth([requireLoginedHook])
     },
     async (request, reply) => {
-      const sessionToken = envConfig.COOKIE_MODE
-        ? request.cookies.sessionToken
-        : request.headers.authorization?.split(' ')[1]
+      const tokenFromCookie = request.cookies.sessionToken
+      const tokenFromHeader = request.headers.authorization?.split(' ')[1]
+
+      const sessionToken = envConfig.COOKIE_MODE ? tokenFromCookie ?? tokenFromHeader : tokenFromHeader
       const message = await logoutController(sessionToken as string)
       if (envConfig.COOKIE_MODE) {
         reply
           .clearCookie('sessionToken', {
             path: '/',
             httpOnly: true,
-            sameSite: 'none',
-            secure: true
+            sameSite: envConfig.IS_PRODUCTION ? 'none' : 'lax',
+            secure: envConfig.IS_PRODUCTION,
+            domain: envConfig.IS_PRODUCTION ? envConfig.DOMAIN : undefined
           })
           .send({
             message
@@ -117,15 +119,14 @@ export default async function authRoutes(fastify: FastifyInstance, options: Fast
       const { body } = request
       const { session, account } = await loginController(body)
       if (envConfig.COOKIE_MODE) {
-        console.log("vào có cookie");
         reply
           .setCookie('sessionToken', session.token, {
             path: '/',
             httpOnly: true,
-            secure: true,
+            secure: envConfig.IS_PRODUCTION,
             expires: session.expiresAt,
-            sameSite: 'none',
-            domain: envConfig.DOMAIN
+            sameSite: envConfig.IS_PRODUCTION ? 'none' : 'lax',
+            domain: envConfig.IS_PRODUCTION ? envConfig.DOMAIN : undefined
           })
           .send({
             message: 'Đăng nhập thành công',
@@ -136,7 +137,6 @@ export default async function authRoutes(fastify: FastifyInstance, options: Fast
             }
           })
       } else {
-        console.log("ko có cookie");
         reply.send({
           message: 'Đăng nhập thành công',
           data: {
@@ -161,19 +161,20 @@ export default async function authRoutes(fastify: FastifyInstance, options: Fast
       preValidation: fastify.auth([requireLoginedHook])
     },
     async (request, reply) => {
-      const sessionToken = envConfig.COOKIE_MODE
-        ? request.cookies.sessionToken
-        : request.headers.authorization?.split(' ')[1]
+      const tokenFromCookie = request.cookies.sessionToken
+      const tokenFromHeader = request.headers.authorization?.split(' ')[1]
+
+      const sessionToken = envConfig.COOKIE_MODE ? tokenFromCookie ?? tokenFromHeader : tokenFromHeader
       const session = await slideSessionController(sessionToken as string)
       if (envConfig.COOKIE_MODE) {
         reply
           .setCookie('sessionToken', session.token, {
             path: '/',
             httpOnly: true,
-            secure: true,
+            secure: envConfig.IS_PRODUCTION,
             expires: session.expiresAt,
-            sameSite: 'none',
-            domain: envConfig.DOMAIN
+            sameSite: envConfig.IS_PRODUCTION ? 'none' : 'lax',
+            domain: envConfig.IS_PRODUCTION ? envConfig.DOMAIN : undefined
           })
           .send({
             message: 'Refresh session thành công',

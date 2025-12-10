@@ -33,6 +33,7 @@ export default function LoginForm() {
       toast.success("Login is Successfully!!");
       await authApi.auth({
         sessionToken: result.payload.data.token,
+        expiresAt: result.payload.data.expiresAt,
       });
       router.push("/me");
       clientSessionToken.value = result.payload.data.token;

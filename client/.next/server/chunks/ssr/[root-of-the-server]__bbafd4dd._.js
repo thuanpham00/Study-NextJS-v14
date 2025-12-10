@@ -111,6 +111,7 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$utils$2e$ts__$
 ;
 ;
 const ENTITY_ERROR_STATUS = 422;
+const AUTHENTICATION_ERROR_STATUS = 401;
 class HttpError extends Error {
     status;
     payload;
@@ -171,6 +172,15 @@ const request = async (method, url, options)=>{
     if (!res.ok) {
         if (res.status === ENTITY_ERROR_STATUS) {
             throw new EntityError(data);
+        } else if (res.status === AUTHENTICATION_ERROR_STATUS) {
+            // xử lý token hết hạn hoặc ko hợp lệ thì logout - xử lý ở client
+            if ("TURBOPACK compile-time falsy", 0) {
+                "TURBOPACK unreachable";
+            } else {
+                // xử lý token hết hạn hoặc ko hợp lệ thì logout - xử lý ở server
+                const sessionToken = options?.headers?.Authorization.split("Bearer ")[1];
+                redi;
+            }
         } else {
             throw new HttpError(data);
         }
@@ -230,16 +240,17 @@ const authApi = {
     register: (body)=>{
         return __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$http$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"].post("/auth/register", body);
     },
-    auth: (body)=>{
-        return __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$http$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"].post("/api/auth", body, {
-            baseUrl: ""
-        });
-    },
     logoutFromNextServerToServer: (sessionToken)=>{
         return __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$http$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"].post("/auth/logout", {}, {
             headers: {
                 Authorization: `Bearer ${sessionToken}`
             }
+        });
+    },
+    // route handler
+    auth: (body)=>{
+        return __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$http$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"].post("/api/auth", body, {
+            baseUrl: ""
         });
     },
     logoutFromNextClientToNextServer: ()=>{

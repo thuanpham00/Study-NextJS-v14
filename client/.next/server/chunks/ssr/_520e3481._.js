@@ -47,6 +47,7 @@ var { g: global, __dirname } = __turbopack_context__;
 {
 /* eslint-disable @typescript-eslint/no-explicit-any */ __turbopack_context__.s({
     "cn": (()=>cn),
+    "decodeJWT": (()=>decodeJWT),
     "handleErrorApi": (()=>handleErrorApi),
     "normalizePath": (()=>normalizePath)
 });
@@ -79,6 +80,7 @@ const handleErrorApi = ({ errors, setError, duration })=>{
 const normalizePath = (path)=>{
     return path.startsWith("/") ? path.slice(1) : `/${path}`;
 };
+const decodeJWT;
 }}),
 "[project]/src/lib/http.ts [app-rsc] (ecmascript)": ((__turbopack_context__) => {
 "use strict";
@@ -93,9 +95,13 @@ var { g: global, __dirname } = __turbopack_context__;
 });
 var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$config$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/config.ts [app-rsc] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$utils$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/lib/utils.ts [app-rsc] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$api$2f$navigation$2e$react$2d$server$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__$3c$module__evaluation$3e$__ = __turbopack_context__.i("[project]/node_modules/next/dist/api/navigation.react-server.js [app-rsc] (ecmascript) <module evaluation>");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$components$2f$navigation$2e$react$2d$server$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/client/components/navigation.react-server.js [app-rsc] (ecmascript)");
+;
 ;
 ;
 const ENTITY_ERROR_STATUS = 422;
+const AUTHENTICATION_ERROR_STATUS = 401;
 class HttpError extends Error {
     status;
     payload;
@@ -153,9 +159,19 @@ const request = async (method, url, options)=>{
         status: res.status,
         payload
     };
+    // chỉ có next client mới gọi được tới next server và lấy được cookie ra 
     if (!res.ok) {
         if (res.status === ENTITY_ERROR_STATUS) {
             throw new EntityError(data);
+        } else if (res.status === AUTHENTICATION_ERROR_STATUS) {
+            // xử lý token hết hạn hoặc ko hợp lệ thì logout - xử lý ở client
+            if ("TURBOPACK compile-time falsy", 0) {
+                "TURBOPACK unreachable";
+            } else {
+                // xử lý token hết hạn hoặc ko hợp lệ thì logout - xử lý ở server
+                const sessionToken = options?.headers?.Authorization.split("Bearer ")[1];
+                (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$components$2f$navigation$2e$react$2d$server$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["redirect"])(`/logout?sessionToken=${sessionToken}`); // chạy ở server
+            }
         } else {
             throw new HttpError(data);
         }

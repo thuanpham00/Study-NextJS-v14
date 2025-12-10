@@ -24,10 +24,12 @@ const fastify = Fastify({
 const start = async () => {
   try {
     createFolder(path.resolve(envConfig.UPLOAD_FOLDER))
-    const whitelist = ['*']
+
+    const whitelist = envConfig.COOKIE_MODE ? ['http://localhost:3000'] : ['*']
     fastify.register(cors, {
-      origin: whitelist, // Cho phép tất cả các domain gọi API
-      credentials: true // Cho phép trình duyệt gửi cookie đến server
+      origin: whitelist,
+      // Chỉ cần credentials khi dùng cookie mode
+      credentials: envConfig.COOKIE_MODE
     })
 
     fastify.register(fastifyAuth, {

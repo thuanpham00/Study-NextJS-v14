@@ -1,14 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-
 import envConfig from "@/config";
 import { normalizePath } from "@/lib/utils";
 import { LoginResType } from "@/schemaValidations/auth.schema";
+import { redirect } from "next/navigation";
 
 type CustomOptions = Omit<RequestInit, "method"> & {
   baseUrl?: string | undefined;
 };
 
 const ENTITY_ERROR_STATUS = 422;
+const AUTHENTICATION_ERROR_STATUS = 401;
 
 type EntityErrorPayload = {
   message: string;
@@ -43,6 +44,7 @@ export class EntityError extends HttpError {
 
 class ClientSessionToken {
   private token = "";
+  private _expiresAt = new Date().toISOString();
   get value() {
     return this.token;
   }
@@ -52,6 +54,17 @@ class ClientSessionToken {
       throw new Error("Cannot set session token on server side");
     }
     this.token = token;
+  }
+
+  get expiresAt() {
+    return this._expiresAt;
+  }
+
+  set expiresAt(expiresAt: string) {
+    if (typeof window === "undefined") {
+      throw new Error("Cannot set session token on server side");
+    }
+    this._expiresAt = expiresAt;
   }
 }
 
@@ -78,12 +91,14 @@ const request = async <Response>(
     },
     method,
     body,
+    // credentials: "include", // dùng cho Mode_Cookie = true
   });
   const payload: Response = await res.json();
   const data = {
     status: res.status,
     payload,
   };
+  // chỉ có next client mới gọi được tới next server và lấy được cookie ra
   if (!res.ok) {
     if (res.status === ENTITY_ERROR_STATUS) {
       throw new EntityError(
@@ -92,6 +107,26 @@ const request = async <Response>(
           payload: EntityErrorPayload;
         }
       );
+    } else if (res.status === AUTHENTICATION_ERROR_STATUS) {
+      // xử lý token hết hạn hoặc ko hợp lệ thì logout - xử lý ở client
+      if (typeof window !== "undefined") {
+        // case token hết hạn hoặc ko hợp lệ -> xóa token ở client
+        await fetch("/api/auth/logout", {
+          method: "POST",
+          body: JSON.stringify({ force: true }), // next client gọi tới route handler logout (next server -> server backend) để xóa cookie ở server
+          headers: {
+            ...baseHeaders,
+          },
+        });
+        clientSessionToken.value = "";
+        clientSessionToken.expiresAt = new Date().toISOString();
+        location.href = "/login"; // gọi theo kiểu client - reload trang
+      } else {
+        // xử lý token hết hạn hoặc ko hợp lệ thì logout - xử lý ở server
+
+        const sessionToken = (options?.headers as any)?.Authorization.split("Bearer ")[1];
+        redirect(`/logout?sessionToken=${sessionToken}`); // chạy ở server
+      }
     } else {
       throw new HttpError(data as any);
     }
@@ -100,8 +135,10 @@ const request = async <Response>(
     // chỉ chạy ở client
     if (["/auth/login", "/auth/register"].some((item) => item === normalizePath(url))) {
       clientSessionToken.value = (payload as LoginResType).data.token;
+      clientSessionToken.expiresAt = (payload as LoginResType).data.expiresAt;
     } else if ("/auth/logout" === normalizePath(url)) {
       clientSessionToken.value = "";
+      clientSessionToken.expiresAt = new Date().toISOString();
     }
   }
   return data;
