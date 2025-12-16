@@ -220,8 +220,10 @@ class ClientSessionToken {
 }
 const clientSessionToken = new ClientSessionToken();
 const request = async (method, url, options)=>{
-    const body = options?.body ? JSON.stringify(options.body) : undefined;
-    const baseHeaders = {
+    const body = options?.body ? options?.body instanceof FormData ? options.body : JSON.stringify(options.body) : undefined;
+    const baseHeaders = body instanceof FormData ? {
+        Authorization: clientSessionToken.value ? `Bearer ${clientSessionToken.value}` : ""
+    } : {
         "Content-Type": "application/json",
         Authorization: clientSessionToken.value ? `Bearer ${clientSessionToken.value}` : ""
     };
@@ -241,6 +243,7 @@ const request = async (method, url, options)=>{
         status: res.status,
         payload
     };
+    // đưa về 1 kiểu dữ liệu response chung
     // chỉ có next client mới gọi được tới next server và lấy được cookie ra
     if (!res.ok) {
         if (res.status === ENTITY_ERROR_STATUS) {
@@ -289,10 +292,9 @@ const http = {
             body
         });
     },
-    delete (url, body, options) {
+    delete (url, options) {
         return request("DELETE", url, {
-            ...options,
-            body
+            ...options
         });
     }
 };

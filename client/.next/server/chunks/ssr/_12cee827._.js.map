@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 6, "column": 0}, "map": {"version":3,"sources":[],"names":[],"mappings":"","debugId":null}},
+    {"offset": {"line": 24, "column": 0}, "map": {"version":3,"sources":["file:///E:/VS_CODE/NextJS/Study-NextJS-basic/client/src/apiRequest/product.ts"],"sourcesContent":["import http from \"@/lib/http\";\r\nimport {\r\n  CreateProductBodyType,\r\n  ProductListResType,\r\n  ProductResType,\r\n} from \"@/schemaValidations/product.schema\";\r\n\r\nconst productApi = {\r\n  getList: () => {\r\n    return http.get<ProductListResType>(\"/products\");\r\n  },\r\n\r\n  getDetail: (id: number) => {\r\n    return http.get<ProductResType>(`/products/${id}`);\r\n  },\r\n\r\n  create: (body: CreateProductBodyType) => {\r\n    return http.post<ProductResType>(\"/products\", body);\r\n  },\r\n\r\n  uploadImage: (body: FormData) => {\r\n    return http.post<{\r\n      message: string;\r\n      data: string;\r\n    }>(\"/media/upload\", body);\r\n  },\r\n};\r\n\r\nexport default productApi;\r\n"],"names":[],"mappings":";;;AAAA;;AAOA,MAAM,aAAa;IACjB,SAAS;QACP,OAAO,kHAAA,CAAA,UAAI,CAAC,GAAG,CAAqB;IACtC;IAEA,WAAW,CAAC;QACV,OAAO,kHAAA,CAAA,UAAI,CAAC,GAAG,CAAiB,CAAC,UAAU,EAAE,IAAI;IACnD;IAEA,QAAQ,CAAC;QACP,OAAO,kHAAA,CAAA,UAAI,CAAC,IAAI,CAAiB,aAAa;IAChD;IAEA,aAAa,CAAC;QACZ,OAAO,kHAAA,CAAA,UAAI,CAAC,IAAI,CAGb,iBAAiB;IACtB;AACF;uCAEe","debugId":null}}]
+}

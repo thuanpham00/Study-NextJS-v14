@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import { differenceInHours } from "date-fns";
 
 export default function SlideSession() {
+  // không đợi token hết hạn mà hãy tự động gia hạn token khi gần hết
   useEffect(() => {
     const interval = setInterval(async () => {
       const now = new Date();

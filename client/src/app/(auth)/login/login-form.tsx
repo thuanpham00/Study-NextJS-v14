@@ -24,6 +24,19 @@ export default function LoginForm() {
     },
   });
 
+  /**
+   * router.refresh() làm gì:
+    Re-execute tất cả Server Components trên trang hiện tại:
+
+    - Chạy lại code trong Server Components
+    - Fetch lại data mới (nếu có API calls)
+    - Re-render với data mới
+    - KHÔNG reload trang, KHÔNG thay đổi URL
+   */
+
+  // nếu có api calls thì next client -> next server -> api server (từ next server -> db : khong thấy tren devtools vì server - server`)
+  // tưởng tượng thêm 1 bước gọi từ next server -> api server lấy data mới và cập nhật lại html - đồng bộ lại các server component
+
   async function onSubmit(values: LoginBodyType) {
     if (loading) return;
     setLoading(true);
@@ -35,8 +48,9 @@ export default function LoginForm() {
         sessionToken: result.payload.data.token,
         expiresAt: result.payload.data.expiresAt,
       });
-      router.push("/me");
       clientSessionToken.value = result.payload.data.token;
+      router.push("/me");
+      router.refresh(); // Re-render Server Component (Header) để đồng bộ sessionToken
     } catch (error: any) {
       handleErrorApi({ errors: error, setError: form.setError });
     } finally {

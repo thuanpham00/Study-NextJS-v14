@@ -13,11 +13,14 @@ export default function ButtonLogout() {
   const handleLogout = async () => {
     try {
       await authApi.logoutFromNextClientToNextServer();
+      router.push("/login");
     } catch (error) {
       handleErrorApi({ errors: error });
       authApi.logoutFromNextClientToNextServer(true).then((res) => {
         router.push(`/login?redirectFrom=${pathname}`);
       });
+    } finally {
+      router.refresh();
     }
   };
 

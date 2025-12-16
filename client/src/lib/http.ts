@@ -75,11 +75,20 @@ const request = async <Response>(
   url: string,
   options?: CustomOptions | undefined
 ) => {
-  const body = options?.body ? JSON.stringify(options.body) : undefined;
-  const baseHeaders = {
-    "Content-Type": "application/json",
-    Authorization: clientSessionToken.value ? `Bearer ${clientSessionToken.value}` : "",
-  };
+  const body = options?.body
+    ? options?.body instanceof FormData
+      ? options.body
+      : JSON.stringify(options.body)
+    : undefined;
+  const baseHeaders =
+    body instanceof FormData
+      ? {
+          Authorization: clientSessionToken.value ? `Bearer ${clientSessionToken.value}` : "",
+        }
+      : {
+          "Content-Type": "application/json",
+          Authorization: clientSessionToken.value ? `Bearer ${clientSessionToken.value}` : "",
+        };
   const baseUrl = options?.baseUrl === undefined ? envConfig.NEXT_PUBLIC_API_ENDPOINT : options.baseUrl;
   const fullUrl = url.startsWith("/") ? `${baseUrl}${url}` : `${baseUrl}/${url}`;
 
@@ -88,7 +97,7 @@ const request = async <Response>(
     headers: {
       ...baseHeaders,
       ...options?.headers,
-    },
+    } as any,
     method,
     body,
     // credentials: "include", // dùng cho Mode_Cookie = true
@@ -98,6 +107,7 @@ const request = async <Response>(
     status: res.status,
     payload,
   };
+  // đưa về 1 kiểu dữ liệu response chung
   // chỉ có next client mới gọi được tới next server và lấy được cookie ra
   if (!res.ok) {
     if (res.status === ENTITY_ERROR_STATUS) {
@@ -116,14 +126,13 @@ const request = async <Response>(
           body: JSON.stringify({ force: true }), // next client gọi tới route handler logout (next server -> server backend) để xóa cookie ở server
           headers: {
             ...baseHeaders,
-          },
+          } as any,
         });
         clientSessionToken.value = "";
         clientSessionToken.expiresAt = new Date().toISOString();
         location.href = "/login"; // gọi theo kiểu client - reload trang
       } else {
         // xử lý token hết hạn hoặc ko hợp lệ thì logout - xử lý ở server
-
         const sessionToken = (options?.headers as any)?.Authorization.split("Bearer ")[1];
         redirect(`/logout?sessionToken=${sessionToken}`); // chạy ở server
       }
@@ -157,8 +166,8 @@ const http = {
     return request<Response>("PUT", url, { ...options, body });
   },
 
-  delete<Response>(url: string, body: any, options?: Omit<CustomOptions, "body"> | undefined) {
-    return request<Response>("DELETE", url, { ...options, body });
+  delete<Response>(url: string, options?: Omit<CustomOptions, "body"> | undefined) {
+    return request<Response>("DELETE", url, { ...options });
   },
 };
 

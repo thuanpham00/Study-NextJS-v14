@@ -1,10 +1,10 @@
 {
   "/(auth)/login/page": "app/(auth)/login/page.js",
-  "/(auth)/logout/page": "app/(auth)/logout/page.js",
-  "/_not-found/page": "app/_not-found/page.js",
   "/api/auth/logout/route": "app/api/auth/logout/route.js",
   "/api/auth/route": "app/api/auth/route.js",
   "/api/auth/slide-session/route": "app/api/auth/slide-session/route.js",
   "/favicon.ico/route": "app/favicon.ico/route.js",
-  "/me/page": "app/me/page.js"
+  "/me/page": "app/me/page.js",
+  "/products/[id]/page": "app/products/[id]/page.js",
+  "/products/page": "app/products/page.js"
 }
