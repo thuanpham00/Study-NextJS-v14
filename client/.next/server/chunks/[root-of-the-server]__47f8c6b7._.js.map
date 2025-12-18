@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": [],
-  "sections": [
-    {"offset": {"line": 6, "column": 0}, "map": {"version":3,"sources":[],"names":[],"mappings":"","debugId":null}},
-    {"offset": {"line": 84, "column": 0}, "map": {"version":3,"sources":["file:///E:/VS_CODE/NextJS/Study-NextJS-basic/client/src/app/api/auth/route.ts"],"sourcesContent":["import {} from \"jsonwebtoken\"\r\ntype PayloadJWT = {\r\n  iat: number;\r\n  exp: number;\r\n  tokenType: string;\r\n  userId: number;\r\n};\r\n\r\nexport async function POST(request: Request) {\r\n  const res = await request.json();\r\n  const sessionToken = res.sessionToken as string;\r\n  if (!sessionToken) {\r\n    return Response.json(\r\n      { message: \"Không nhận được session\" },\r\n      {\r\n        status: 400,\r\n      }\r\n    );\r\n  }\r\n  return Response.json(res, {\r\n    status: 200,\r\n    headers: {\r\n      \"Set-Cookie\": `sessionToken=${sessionToken}; Path=/; httpOnly`, // set token vô server next - cookie này thuộc về client next\r\n    },\r\n  });\r\n}\r\n"],"names":[],"mappings":";;;AAAA;;AAQO,eAAe,KAAK,OAAgB;IACzC,MAAM,MAAM,MAAM,QAAQ,IAAI;IAC9B,MAAM,eAAe,IAAI,YAAY;IACrC,IAAI,CAAC,cAAc;QACjB,OAAO,SAAS,IAAI,CAClB;YAAE,SAAS;QAA0B,GACrC;YACE,QAAQ;QACV;IAEJ;IACA,OAAO,SAAS,IAAI,CAAC,KAAK;QACxB,QAAQ;QACR,SAAS;YACP,cAAc,CAAC,aAAa,EAAE,aAAa,kBAAkB,CAAC;QAChE;IACF;AACF","debugId":null}}]
-}

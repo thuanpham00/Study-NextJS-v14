@@ -1,6 +1,0 @@
-{
-  "version": 3,
-  "sources": [],
-  "sections": [
-    {"offset": {"line": 7, "column": 0}, "map": {"version":3,"sources":["file:///E:/VS_CODE/NextJS/setup-du-an-nextjs/client/src/config.ts"],"sourcesContent":["import z from \"zod\";\r\n\r\nconst configSchema = z.object({\r\n  NEXT_PUBLIC_API_ENDPOINT: z.string(),\r\n});\r\n\r\nconst configProject = configSchema.safeParse({\r\n  NEXT_PUBLIC_API_ENDPOINT: process.env.NEXT_PUBLIC_API_ENDPOINT,\r\n});\r\n\r\nif (!configProject.success) {\r\n  console.error(configProject.error.issues);\r\n  throw new Error(\"Các giá trị khai báo trong file .env không hợp lệ\");\r\n}\r\n\r\nconst envConfig = configProject.data;\r\nexport default envConfig;\r\n"],"names":[],"mappings":";;;AAO4B;AAP5B;;AAEA,MAAM,eAAe,+IAAA,CAAA,UAAC,CAAC,MAAM,CAAC;IAC5B,0BAA0B,+IAAA,CAAA,UAAC,CAAC,MAAM;AACpC;AAEA,MAAM,gBAAgB,aAAa,SAAS,CAAC;IAC3C,wBAAwB;AAC1B;AAEA,IAAI,CAAC,cAAc,OAAO,EAAE;IAC1B,QAAQ,KAAK,CAAC,cAAc,KAAK,CAAC,MAAM;IACxC,MAAM,IAAI,MAAM;AAClB;AAEA,MAAM,YAAY,cAAc,IAAI;uCACrB","debugId":null}}]
-}

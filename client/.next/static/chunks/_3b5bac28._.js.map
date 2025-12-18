@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": [],
-  "sections": [
-    {"offset": {"line": 7, "column": 0}, "map": {"version":3,"sources":["file:///E:/VS_CODE/NextJS/setup-du-an-nextjs/client/src/app/components/ButtonRedirect.tsx"],"sourcesContent":["'use client'\r\nimport React from \"react\";\r\nimport { useRouter } from \"next/navigation\";\r\n\r\nexport default function ButtonRedirect() {\r\n  const router = useRouter();\r\n\r\n  const handleNavigate = () => {\r\n    router.push(\"/login\");\r\n  };\r\n\r\n  return <button onClick={handleNavigate}>Chuyển tới trang login</button>;\r\n}\r\n"],"names":[],"mappings":";;;;AAEA;;;AAFA;;AAIe,SAAS;;IACtB,MAAM,SAAS,CAAA,GAAA,qIAAA,CAAA,YAAS,AAAD;IAEvB,MAAM,iBAAiB;QACrB,OAAO,IAAI,CAAC;IACd;IAEA,qBAAO,6LAAC;QAAO,SAAS;kBAAgB;;;;;;AAC1C;GARwB;;QACP,qIAAA,CAAA,YAAS;;;KADF","debugId":null}},
-    {"offset": {"line": 47, "column": 0}, "map": {"version":3,"sources":["file:///E:/VS_CODE/NextJS/setup-du-an-nextjs/client/node_modules/next/navigation.js"],"sourcesContent":["module.exports = require('./dist/client/components/navigation')\n"],"names":[],"mappings":"AAAA,OAAO,OAAO","ignoreList":[0],"debugId":null}}]
-}

@@ -1,6 +1,0 @@
-{
-  "version": 3,
-  "sources": [],
-  "sections": [
-    {"offset": {"line": 7, "column": 0}, "map": {"version":3,"sources":["file:///E:/VS_CODE/NextJS/setup-du-an-nextjs/client/src/app/%28auth%29/login/layout.tsx"],"sourcesContent":["export default function LoginLayout({\r\n  children,\r\n}: Readonly<{\r\n  children: React.ReactNode;\r\n}>) {\r\n  return (\r\n    <main>\r\n      <h1>Auth layout</h1>\r\n      {children}\r\n    </main>\r\n  );\r\n}\r\n"],"names":[],"mappings":";;;;;AAAe,SAAS,YAAY,EAClC,QAAQ,EAGR;IACA,qBACE,8OAAC;;0BACC,8OAAC;0BAAG;;;;;;YACH;;;;;;;AAGP","debugId":null}}]
-}
