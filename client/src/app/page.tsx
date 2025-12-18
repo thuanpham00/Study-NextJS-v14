@@ -1,5 +1,12 @@
 // import Image from "next/image";
 
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Home",
+  description: "Trang chủ trong ứng dụng quản lý sản phẩm",
+};
+
 export default function Home() {
   return (
     <main>

@@ -8,7 +8,7 @@ const accountApi = {
         Authorization: `Bearer ${sessionToken}`,
       },
     });
-  },
+  }, // gọi ở server nên phải truyền sessionToken vào
 
   clientMe: () => {
     return http.get<AccountResType>("/account/me");

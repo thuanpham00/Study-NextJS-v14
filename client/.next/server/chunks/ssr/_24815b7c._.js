@@ -37,6 +37,12 @@ const productApi = {
     create: (body)=>{
         return __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$http$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["default"].post("/products", body);
     },
+    update: (id, body)=>{
+        return __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$http$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["default"].put(`/products/${id}`, body);
+    },
+    delete: (id)=>{
+        return __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$http$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["default"].delete(`/products/${id}`);
+    },
     uploadImage: (body)=>{
         return __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$http$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["default"].post("/media/upload", body);
     }
@@ -56,7 +62,7 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$apiRequest$2f$product
 ;
 ;
 async function ProductDetailPage({ params }) {
-    let product = null;
+    let product = undefined;
     try {
         const { payload } = await __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$apiRequest$2f$product$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["default"].getDetail(Number(params.id));
         product = payload.data;
@@ -64,7 +70,7 @@ async function ProductDetailPage({ params }) {
         console.log(error);
     }
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-        className: "p-2",
+        className: "w-full",
         children: [
             !product && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                 children: "Không tìm thấy sản phẩm..."
@@ -73,12 +79,29 @@ async function ProductDetailPage({ params }) {
                 lineNumber: 13,
                 columnNumber: 20
             }, this),
-            product !== null && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])(ProductEditForm, {
-                product: product
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("h1", {
+                children: product?.name
             }, void 0, false, {
                 fileName: "[project]/src/app/products/[id]/page.tsx",
                 lineNumber: 14,
-                columnNumber: 28
+                columnNumber: 7
+            }, this),
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
+                children: product?.description
+            }, void 0, false, {
+                fileName: "[project]/src/app/products/[id]/page.tsx",
+                lineNumber: 15,
+                columnNumber: 7
+            }, this),
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])(Image, {
+                src: product?.image || "",
+                alt: product?.name || "",
+                width: 300,
+                height: 300
+            }, void 0, false, {
+                fileName: "[project]/src/app/products/[id]/page.tsx",
+                lineNumber: 16,
+                columnNumber: 7
             }, this)
         ]
     }, void 0, true, {

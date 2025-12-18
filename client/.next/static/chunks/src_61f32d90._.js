@@ -42,10 +42,12 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$zod$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$locals$3e$__ = __turbopack_context__.i("[project]/node_modules/zod/index.js [app-client] (ecmascript) <locals>");
 ;
 const configSchema = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$zod$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$locals$3e$__["default"].object({
-    NEXT_PUBLIC_API_ENDPOINT: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$zod$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$locals$3e$__["default"].string()
+    NEXT_PUBLIC_API_ENDPOINT: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$zod$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$locals$3e$__["default"].string(),
+    NEXT_PUBLIC_URL: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$zod$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$locals$3e$__["default"].string()
 });
 const configProject = configSchema.safeParse({
-    NEXT_PUBLIC_API_ENDPOINT: ("TURBOPACK compile-time value", "http://localhost:4000")
+    NEXT_PUBLIC_API_ENDPOINT: ("TURBOPACK compile-time value", "http://localhost:4000"),
+    NEXT_PUBLIC_URL: ("TURBOPACK compile-time value", "https://product-app-nextjs.vercel.app")
 });
 if (!configProject.success) {
     console.error(configProject.error.issues);
@@ -427,7 +429,7 @@ function ButtonLogout() {
         children: "Đăng xuất"
     }, void 0, false, {
         fileName: "[project]/src/components/button-logout.tsx",
-        lineNumber: 28,
+        lineNumber: 29,
         columnNumber: 5
     }, this);
 }
@@ -954,18 +956,30 @@ if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelper
 var { g: global, __dirname, k: __turbopack_refresh__, m: module } = __turbopack_context__;
 {
 __turbopack_context__.s({
-    "default": (()=>AppProvider)
+    "default": (()=>AppProvider),
+    "useAppContext": (()=>useAppContext)
 });
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/compiled/react/jsx-dev-runtime.js [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$http$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/lib/http.ts [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
 ;
-var _s = __turbopack_context__.k.signature();
+var _s = __turbopack_context__.k.signature(), _s1 = __turbopack_context__.k.signature();
 "use client";
 ;
 ;
-function AppProvider({ children, initialSessionToken = "" }) {
+const AppContext = /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["createContext"])({
+    profile: null,
+    setProfile: ()=>{}
+});
+const useAppContext = ()=>{
     _s();
+    const context = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useContext"])(AppContext);
+    return context;
+};
+_s(useAppContext, "b9L3QQ+jgeyIrH0NfHrJ8nn7VMU=");
+function AppProvider({ children, initialSessionToken = "", user }) {
+    _s1();
+    const [profile, setProfile] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(user);
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])({
         "AppProvider.useState": ()=>{
             if ("TURBOPACK compile-time truthy", 1) {
@@ -974,11 +988,19 @@ function AppProvider({ children, initialSessionToken = "" }) {
             }
         }
     }["AppProvider.useState"]); // render lần đầu gán giá trị ban đầu cho sessionToken tránh case undefined - chạy trước ở nơi khác
-    return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Fragment"], {
+    return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(AppContext.Provider, {
+        value: {
+            profile,
+            setProfile
+        },
         children: children
-    }, void 0, false);
+    }, void 0, false, {
+        fileName: "[project]/src/app/AppProvider.tsx",
+        lineNumber: 39,
+        columnNumber: 10
+    }, this);
 }
-_s(AppProvider, "KeigDeoLwc6d8F0ovrI6P1FOk48=");
+_s1(AppProvider, "Bex+1Rq8FqAJPLkUcEsfk9rGXTg=");
 _c = AppProvider;
 var _c;
 __turbopack_context__.k.register(_c, "AppProvider");

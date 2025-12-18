@@ -2,6 +2,7 @@
 "use client";
 
 import authApi from "@/apiRequest/auth";
+import { useAppContext } from "@/app/AppProvider";
 import { Button } from "@/components/ui/button";
 import { handleErrorApi } from "@/lib/utils";
 import { usePathname, useRouter } from "next/navigation";

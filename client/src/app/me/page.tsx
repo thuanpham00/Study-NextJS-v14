@@ -1,7 +1,12 @@
 import accountApi from "@/apiRequest/account";
 import ProfileForm from "@/app/me/profile-form";
+import { Metadata } from "next";
 import { cookies } from "next/headers";
-import React from "react";
+
+export const metadata: Metadata = {
+  title: "Profile",
+  description: "Được tạo bởi PMT",
+};
 
 export default async function MeProfile() {
   // Khi truy cập page thì mặc định là client gửi request đến server next ròi nên có thể lấy cookie từ next client

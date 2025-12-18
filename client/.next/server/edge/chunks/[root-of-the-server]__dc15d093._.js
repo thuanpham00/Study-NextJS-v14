@@ -35,6 +35,7 @@ const authPath = [
     "/login",
     "/register"
 ];
+const regexProductEdit = /^\/products\/\d+\/edit$/;
 function middleware(request) {
     const { pathname } = request.nextUrl;
     const sessionToken = request.cookies.get("sessionToken")?.value;
@@ -46,13 +47,17 @@ function middleware(request) {
     if (authPath.some((path)=>pathname.startsWith(path)) && sessionToken) {
         return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$esm$2f$server$2f$web$2f$spec$2d$extension$2f$response$2e$js__$5b$middleware$2d$edge$5d$__$28$ecmascript$29$__["NextResponse"].redirect(new URL("/me", request.url));
     }
+    if (pathname.match(regexProductEdit) && !sessionToken) {
+        return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$esm$2f$server$2f$web$2f$spec$2d$extension$2f$response$2e$js__$5b$middleware$2d$edge$5d$__$28$ecmascript$29$__["NextResponse"].redirect(new URL("/login", request.url));
+    }
     return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$esm$2f$server$2f$web$2f$spec$2d$extension$2f$response$2e$js__$5b$middleware$2d$edge$5d$__$28$ecmascript$29$__["NextResponse"].next();
 }
 const config = {
     matcher: [
         "/me",
         "/login",
-        "/register"
+        "/register",
+        "/products/:path*"
     ]
 };
 }}),
