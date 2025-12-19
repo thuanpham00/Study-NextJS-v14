@@ -1,0 +1,5 @@
+User-Agent: *
+Allow: /
+Disallow: /me/
+
+Sitemap: https://product-app-nextjs.vercel.app/sitemap.xml

@@ -1,0 +1,19 @@
+{
+  "/_not-found/page": "/_not-found",
+  "/api/auth/logout/route": "/api/auth/logout",
+  "/api/auth/route": "/api/auth",
+  "/api/auth/slide-session/route": "/api/auth/slide-session",
+  "/apple-icon.png/route": "/apple-icon.png",
+  "/robots.txt/route": "/robots.txt",
+  "/icon.png/route": "/icon.png",
+  "/favicon.ico/route": "/favicon.ico",
+  "/products/[id]/edit/page": "/products/[id]/edit",
+  "/products/[id]/page": "/products/[id]",
+  "/products/add/page": "/products/add",
+  "/page": "/",
+  "/me/page": "/me",
+  "/products/page": "/products",
+  "/(auth)/login/page": "/login",
+  "/(auth)/register/page": "/register",
+  "/(auth)/logout/page": "/logout"
+}

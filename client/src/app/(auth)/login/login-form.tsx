@@ -9,7 +9,6 @@ import { toast } from "sonner";
 import authApi from "@/apiRequest/auth";
 import { LoginBody, LoginBodyType } from "@/schemaValidations/auth.schema";
 import { useRouter } from "next/navigation";
-import { clientSessionToken } from "@/lib/http";
 import { handleErrorApi } from "@/lib/utils";
 import { useState } from "react";
 
@@ -48,7 +47,6 @@ export default function LoginForm() {
         sessionToken: result.payload.data.token,
         expiresAt: result.payload.data.expiresAt,
       });
-      clientSessionToken.value = result.payload.data.token;
       router.push("/me");
       router.refresh(); // Re-render Server Component (Header) để đồng bộ sessionToken
     } catch (error: any) {

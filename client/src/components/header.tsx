@@ -40,7 +40,9 @@ export default async function Header({ user }: { user: AccountResType["data"] | 
             </li>
           </Fragment>
         )}
-
+        <li>
+          <ButtonLogout />
+        </li>
         <li>
           <Link href={"/products"}>
             <Button variant={"secondary"}>Danh sách sản phẩm</Button>

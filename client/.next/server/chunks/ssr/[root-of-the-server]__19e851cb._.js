@@ -167,8 +167,8 @@ var { g: global, __dirname } = __turbopack_context__;
 /* eslint-disable @typescript-eslint/no-explicit-any */ __turbopack_context__.s({
     "EntityError": (()=>EntityError),
     "HttpError": (()=>HttpError),
-    "clientSessionToken": (()=>clientSessionToken),
-    "default": (()=>__TURBOPACK__default__export__)
+    "default": (()=>__TURBOPACK__default__export__),
+    "isClient": (()=>isClient)
 });
 var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$config$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/config.ts [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$utils$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/lib/utils.ts [app-ssr] (ecmascript)");
@@ -199,38 +199,20 @@ class EntityError extends HttpError {
         this.payload = payload;
     }
 }
-class ClientSessionToken {
-    token = "";
-    _expiresAt = new Date().toISOString();
-    get value() {
-        return this.token;
-    }
-    set value(token) {
-        // nếu gọi method này ở server thì sẽ bị lỗi - chỉ chạy ở client
-        if ("TURBOPACK compile-time truthy", 1) {
-            throw new Error("Cannot set session token on server side");
-        }
-        this.token = token;
-    }
-    get expiresAt() {
-        return this._expiresAt;
-    }
-    set expiresAt(expiresAt) {
-        if ("TURBOPACK compile-time truthy", 1) {
-            throw new Error("Cannot set session token on server side");
-        }
-        this._expiresAt = expiresAt;
-    }
-}
-const clientSessionToken = new ClientSessionToken();
+const isClient = ()=>"undefined" !== "undefined";
 const request = async (method, url, options)=>{
-    const body = options?.body ? options?.body instanceof FormData ? options.body : JSON.stringify(options.body) : undefined;
-    const baseHeaders = body instanceof FormData ? {
-        Authorization: clientSessionToken.value ? `Bearer ${clientSessionToken.value}` : ""
-    } : {
-        "Content-Type": "application/json",
-        Authorization: clientSessionToken.value ? `Bearer ${clientSessionToken.value}` : ""
+    let body = undefined;
+    if (options?.body instanceof FormData) {
+        body = options.body;
+    } else if (options?.body) {
+        body = JSON.stringify(options?.body);
+    }
+    const baseHeaders = body instanceof FormData ? {} : {
+        "Content-Type": "application/json"
     };
+    if (isClient()) {
+        "TURBOPACK unreachable";
+    }
     const baseUrl = options?.baseUrl === undefined ? __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$config$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"].NEXT_PUBLIC_API_ENDPOINT : options.baseUrl;
     const fullUrl = url.startsWith("/") ? `${baseUrl}${url}` : `${baseUrl}/${url}`;
     const res = await fetch(fullUrl, {
@@ -254,7 +236,7 @@ const request = async (method, url, options)=>{
             throw new EntityError(data);
         } else if (res.status === AUTHENTICATION_ERROR_STATUS) {
             // xử lý token hết hạn hoặc ko hợp lệ thì logout - xử lý ở client
-            if ("TURBOPACK compile-time falsy", 0) {
+            if (isClient()) {
                 "TURBOPACK unreachable";
             } else {
                 // xử lý token hết hạn hoặc ko hợp lệ thì logout - xử lý ở server
@@ -265,18 +247,8 @@ const request = async (method, url, options)=>{
             throw new HttpError(data);
         }
     }
-    if ("undefined" !== undefined) {
-        // chỉ chạy ở client
-        if ([
-            "/auth/login",
-            "/auth/register"
-        ].some((item)=>item === (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$utils$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["normalizePath"])(url))) {
-            clientSessionToken.value = payload.data.token;
-            clientSessionToken.expiresAt = payload.data.expiresAt;
-        } else if ("/auth/logout" === (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$utils$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["normalizePath"])(url)) {
-            clientSessionToken.value = "";
-            clientSessionToken.expiresAt = new Date().toISOString();
-        }
+    if (isClient()) {
+        "TURBOPACK unreachable";
     }
     return data;
 };
@@ -448,6 +420,8 @@ function ButtonLogout() {
             });
         } finally{
             router.refresh();
+            localStorage.removeItem("sessionToken");
+            localStorage.removeItem("sessionTokenExpiresAt");
         }
     };
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Button"], {
@@ -915,10 +889,8 @@ __turbopack_context__.s({
     "useAppContext": (()=>useAppContext)
 });
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/server/route-modules/app-page/vendored/ssr/react-jsx-dev-runtime.js [app-ssr] (ecmascript)");
-var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$http$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/lib/http.ts [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/server/route-modules/app-page/vendored/ssr/react.js [app-ssr] (ecmascript)");
 "use client";
-;
 ;
 ;
 const AppContext = /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["createContext"])({
@@ -929,13 +901,8 @@ const useAppContext = ()=>{
     const context = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useContext"])(AppContext);
     return context;
 };
-function AppProvider({ children, initialSessionToken = "", user }) {
+function AppProvider({ children, user }) {
     const [profile, setProfile] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(user);
-    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(()=>{
-        if ("TURBOPACK compile-time falsy", 0) {
-            "TURBOPACK unreachable";
-        }
-    }); // render lần đầu gán giá trị ban đầu cho sessionToken tránh case undefined - chạy trước ở nơi khác
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(AppContext.Provider, {
         value: {
             profile,
@@ -944,7 +911,7 @@ function AppProvider({ children, initialSessionToken = "", user }) {
         children: children
     }, void 0, false, {
         fileName: "[project]/src/app/AppProvider.tsx",
-        lineNumber: 39,
+        lineNumber: 23,
         columnNumber: 10
     }, this);
 }
@@ -958,11 +925,9 @@ __turbopack_context__.s({
     "default": (()=>SlideSession)
 });
 var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$apiRequest$2f$auth$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/apiRequest/auth.ts [app-ssr] (ecmascript)");
-var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$http$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/lib/http.ts [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/server/route-modules/app-page/vendored/ssr/react.js [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$differenceInHours$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/date-fns/differenceInHours.js [app-ssr] (ecmascript)");
 "use client";
-;
 ;
 ;
 ;
@@ -971,11 +936,11 @@ function SlideSession() {
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
         const interval = setInterval(async ()=>{
             const now = new Date();
-            const expiresAt = new Date(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$http$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["clientSessionToken"].expiresAt);
+            const expiresAt = new Date(localStorage.getItem("sessionTokenExpiresAt") || "");
             if ((0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$differenceInHours$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["differenceInHours"])(expiresAt, now) < 1) {
                 // nếu bé hơn 1 giờ thì slide lại session
                 const res = await __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$apiRequest$2f$auth$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"].slideSessionFromNextClientToNextServer();
-                __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$http$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["clientSessionToken"].expiresAt = res.payload.data.expiresAt;
+                localStorage.setItem("sessionTokenExpiresAt", res.payload.data.expiresAt);
             }
         }, 1000 * 60 * 60); // 60 minutes
         return ()=>{

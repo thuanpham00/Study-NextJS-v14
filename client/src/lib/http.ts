@@ -42,53 +42,36 @@ export class EntityError extends HttpError {
   }
 }
 
-class ClientSessionToken {
-  private token = "";
-  private _expiresAt = new Date().toISOString();
-  get value() {
-    return this.token;
-  }
-  set value(token: string) {
-    // nếu gọi method này ở server thì sẽ bị lỗi - chỉ chạy ở client
-    if (typeof window === "undefined") {
-      throw new Error("Cannot set session token on server side");
-    }
-    this.token = token;
-  }
-
-  get expiresAt() {
-    return this._expiresAt;
-  }
-
-  set expiresAt(expiresAt: string) {
-    if (typeof window === "undefined") {
-      throw new Error("Cannot set session token on server side");
-    }
-    this._expiresAt = expiresAt;
-  }
-}
-
-export const clientSessionToken = new ClientSessionToken();
+export const isClient = () => typeof window !== "undefined";
 
 const request = async <Response>(
   method: "GET" | "POST" | "PUT" | "DELETE",
   url: string,
   options?: CustomOptions | undefined
 ) => {
-  const body = options?.body
-    ? options?.body instanceof FormData
-      ? options.body
-      : JSON.stringify(options.body)
-    : undefined;
-  const baseHeaders =
+  let body: FormData | string | undefined = undefined;
+  if (options?.body instanceof FormData) {
+    body = options.body;
+  } else if (options?.body) {
+    body = JSON.stringify(options?.body);
+  }
+
+  const baseHeaders: {
+    [key: string]: string;
+  } =
     body instanceof FormData
-      ? {
-          Authorization: clientSessionToken.value ? `Bearer ${clientSessionToken.value}` : "",
-        }
+      ? {}
       : {
           "Content-Type": "application/json",
-          Authorization: clientSessionToken.value ? `Bearer ${clientSessionToken.value}` : "",
         };
+
+  if (isClient()) {
+    const sessionToken = localStorage.getItem("sessionToken");
+    if (sessionToken) {
+      baseHeaders["Authorization"] = `Bearer ${sessionToken}`; // chỉ truyền token được ở client // ở server component thì phải tự truyền vào - thêm thủ công
+    }
+  }
+
   const baseUrl = options?.baseUrl === undefined ? envConfig.NEXT_PUBLIC_API_ENDPOINT : options.baseUrl;
   const fullUrl = url.startsWith("/") ? `${baseUrl}${url}` : `${baseUrl}/${url}`;
 
@@ -119,7 +102,7 @@ const request = async <Response>(
       );
     } else if (res.status === AUTHENTICATION_ERROR_STATUS) {
       // xử lý token hết hạn hoặc ko hợp lệ thì logout - xử lý ở client
-      if (typeof window !== "undefined") {
+      if (isClient()) {
         // case token hết hạn hoặc ko hợp lệ -> xóa token ở client
         await fetch("/api/auth/logout", {
           method: "POST",
@@ -128,9 +111,14 @@ const request = async <Response>(
             ...baseHeaders,
           } as any,
         });
-        clientSessionToken.value = "";
-        clientSessionToken.expiresAt = new Date().toISOString();
-        location.href = "/login"; // gọi theo kiểu client - reload trang
+        try {
+        } catch (error) {
+          console.log(error);
+        } finally {
+          localStorage.removeItem("sessionToken");
+          localStorage.removeItem("sessionTokenExpiresAt");
+          location.href = "/login"; // gọi theo kiểu client - reload trang
+        }
       } else {
         // xử lý token hết hạn hoặc ko hợp lệ thì logout - xử lý ở server
         const sessionToken = (options?.headers as any)?.Authorization.split("Bearer ")[1];
@@ -140,14 +128,15 @@ const request = async <Response>(
       throw new HttpError(data as any);
     }
   }
-  if (typeof window !== undefined) {
+  if (isClient()) {
     // chỉ chạy ở client
-    if (["/auth/login", "/auth/register"].some((item) => item === normalizePath(url))) {
-      clientSessionToken.value = (payload as LoginResType).data.token;
-      clientSessionToken.expiresAt = (payload as LoginResType).data.expiresAt;
-    } else if ("/auth/logout" === normalizePath(url)) {
-      clientSessionToken.value = "";
-      clientSessionToken.expiresAt = new Date().toISOString();
+    if (["auth/login", "auth/register"].some((item) => item === normalizePath(url))) {
+      const { token, expiresAt } = (payload as LoginResType).data;
+      localStorage.setItem("sessionToken", token);
+      localStorage.setItem("sessionTokenExpiresAt", expiresAt);
+    } else if ("auth/logout" === normalizePath(url)) {
+      localStorage.removeItem("sessionToken");
+      localStorage.removeItem("sessionTokenExpiresAt");
     }
   }
   return data;

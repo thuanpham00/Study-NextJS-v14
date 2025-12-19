@@ -1,3 +1,4 @@
+/* eslint-disable prefer-const */
 import type { Metadata } from "next";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -5,9 +6,7 @@ import { Inter } from "next/font/google"; // dành cho các font có sẵn trên
 import Header from "@/components/header";
 import { Toaster } from "@/components/ui/sonner";
 import AppProvider from "@/app/AppProvider";
-import { cookies } from "next/headers";
 import SlideSession from "@/components/slide-session";
-import accountApi from "@/apiRequest/account";
 import { AccountResType } from "@/schemaValidations/account.schema";
 import { baseOpenGraph } from "@/app/sahred-metadata";
 
@@ -29,14 +28,7 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const cookieStore = cookies();
-  const sessionToken = (await cookieStore).get("sessionToken");
-
   let user: AccountResType["data"] | null = null;
-  if (sessionToken) {
-    const res = await accountApi.me(sessionToken?.value || "");
-    user = res.payload.data;
-  }
 
   return (
     <html lang="en" suppressHydrationWarning>
@@ -44,7 +36,7 @@ export default async function RootLayout({
         <Toaster />
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           <SlideSession />
-          <AppProvider initialSessionToken={sessionToken?.value} user={user}>
+          <AppProvider user={user}>
             <Header user={user} />
             {children}
           </AppProvider>
