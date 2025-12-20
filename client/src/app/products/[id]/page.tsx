@@ -47,6 +47,7 @@ export async function generateMetadata(
   };
 } // hàm này chỉ dùng được ở server component
 
+// Trang này phụ thuộc vào dữ liệu động từ API và không cấu hình static rendering, nên nó là dynamic page.
 export default async function ProductDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   let product = undefined;

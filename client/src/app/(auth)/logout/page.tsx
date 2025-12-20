@@ -1,10 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 import authApi from "@/apiRequest/auth";
+import { useAppContext } from "@/app/AppProvider";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import React, { Suspense, useEffect } from "react";
 
 function LogoutLogic() {
+  const { setProfile } = useAppContext();
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -14,10 +16,11 @@ function LogoutLogic() {
     const sessionTokenLS = localStorage.getItem("sessionToken");
     if (sessionToken === sessionTokenLS) {
       authApi.logoutFromNextClientToNextServer(true).then((res) => {
+        setProfile(null);
         router.push(`/login?redirectFrom=${pathname}`);
       });
     }
-  }, [sessionToken, router, pathname]);
+  }, [sessionToken, router, pathname, setProfile]);
 
   return <div>page</div>;
 }

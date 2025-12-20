@@ -1,14 +1,12 @@
-/* eslint-disable prefer-const */
 import type { Metadata } from "next";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Inter } from "next/font/google"; // dành cho các font có sẵn trên google-font
-import Header from "@/components/header";
 import { Toaster } from "@/components/ui/sonner";
 import AppProvider from "@/app/AppProvider";
 import SlideSession from "@/components/slide-session";
-import { AccountResType } from "@/schemaValidations/account.schema";
 import { baseOpenGraph } from "@/app/sahred-metadata";
+import Header from "@/components/header";
 
 const inter = Inter({
   subsets: ["vietnamese"],
@@ -28,16 +26,14 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  let user: AccountResType["data"] | null = null;
-
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.className}`}>
         <Toaster />
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           <SlideSession />
-          <AppProvider user={user}>
-            <Header user={user} />
+          <AppProvider>
+            <Header />
             {children}
           </AppProvider>
         </ThemeProvider>

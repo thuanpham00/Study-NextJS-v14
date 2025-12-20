@@ -3,11 +3,12 @@ import productApi from "@/apiRequest/product";
 import Image from "next/image";
 import React from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import DeleteProduct from "@/app/products/_components/delete-product";
-import { cookies } from "next/headers";
 import { Metadata } from "next";
+import { ProductListResType } from "@/schemaValidations/product.schema";
+import ProductEditButton from "@/app/products/_components/product-edit-button";
+import ProductAddButton from "@/app/products/_components/product-add-button";
+import ProductTitleAction from "@/app/products/_components/product-title-action";
 
 export const metadata: Metadata = {
   title: "Products",
@@ -16,22 +17,12 @@ export const metadata: Metadata = {
 
 export default async function ProductListPage() {
   const { payload } = await productApi.getList();
-  const products = payload.data;
-  const cookieStore = cookies();
-  const sessionToken = (await cookieStore).get("sessionToken");
-  const isAuth = Boolean(sessionToken);
+  const products = payload.data as ProductListResType["data"];
 
   return (
     <div className="p-2">
       <h1>Product list</h1>
-      {isAuth && (
-        <Link
-          className="bg-red-500 p-2 mt-2 inline-block rounded-md text-white text-sm hover:bg-gray-200 duration-100"
-          href={"/products/add"}
-        >
-          Add Product
-        </Link>
-      )}
+      <ProductAddButton />
 
       <Table>
         <TableHeader>
@@ -42,7 +33,7 @@ export default async function ProductListPage() {
             <TableHead>Description</TableHead>
             <TableHead className="text-right">Price</TableHead>
             <TableHead>Created At</TableHead>
-            {isAuth && <TableHead>Action</TableHead>}
+            <ProductTitleAction />
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -67,14 +58,7 @@ export default async function ProductListPage() {
                 <TableCell className="max-w-[300px] truncate">{product.description}</TableCell>
                 <TableCell className="text-right">${product.price}</TableCell>
                 <TableCell>{new Date(product.createdAt).toLocaleDateString("vi-VN")}</TableCell>
-                {isAuth && (
-                  <TableCell className="space-x-2 flex">
-                    <Link href={`/products/${product.id}/edit`}>
-                      <Button variant={"default"}>Edit</Button>
-                    </Link>
-                    <DeleteProduct product={product} />
-                  </TableCell>
-                )}
+                <ProductEditButton product={product} />
               </TableRow>
             ))
           ) : (

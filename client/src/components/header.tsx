@@ -1,15 +1,18 @@
+"use client";
+import { useAppContext } from "@/app/AppProvider";
 import ButtonLogout from "@/components/button-logout";
 import { ModeToggle } from "@/components/toggle-theme";
 import { Button } from "@/components/ui/button";
-import { AccountResType } from "@/schemaValidations/account.schema";
 import Link from "next/link";
 import { Fragment } from "react";
 
-export default async function Header({ user }: { user: AccountResType["data"] | null }) {
+export default function Header() {
+  const { profile } = useAppContext();
+
   return (
     <div className="flex items-center justify-between m-2">
       <ul className="flex items-center gap-2">
-        {!user ? (
+        {!profile ? (
           <Fragment>
             <li>
               <Link
@@ -32,7 +35,7 @@ export default async function Header({ user }: { user: AccountResType["data"] | 
           <Fragment>
             <li className="mr-2">
               <Link href={"/me"}>
-                <Button variant={"link"}>Xin chào {user?.name}</Button>
+                <Button variant={"link"}>Xin chào {profile?.name}</Button>
               </Link>
             </li>
             <li>
@@ -40,9 +43,6 @@ export default async function Header({ user }: { user: AccountResType["data"] | 
             </li>
           </Fragment>
         )}
-        <li>
-          <ButtonLogout />
-        </li>
         <li>
           <Link href={"/products"}>
             <Button variant={"secondary"}>Danh sách sản phẩm</Button>

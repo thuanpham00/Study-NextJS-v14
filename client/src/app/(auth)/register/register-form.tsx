@@ -11,8 +11,11 @@ import authApi from "@/apiRequest/auth";
 import { useRouter } from "next/navigation";
 import { handleErrorApi } from "@/lib/utils";
 import { useState } from "react";
+import { useAppContext } from "@/app/AppProvider";
 
 export default function RegisterForm() {
+  const { setProfile } = useAppContext();
+
   const router = useRouter();
   const [loading, setLoading] = useState(false);
 
@@ -51,6 +54,7 @@ export default function RegisterForm() {
       });
       router.push("/me");
       router.refresh(); // Re-render Server Component (Header) để đồng bộ sessionToken
+      setProfile(result.payload.data.account);
     } catch (error: any) {
       handleErrorApi({ errors: error, setError: form.setError });
     } finally {

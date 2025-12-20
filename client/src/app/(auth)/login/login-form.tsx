@@ -11,8 +11,11 @@ import { LoginBody, LoginBodyType } from "@/schemaValidations/auth.schema";
 import { useRouter } from "next/navigation";
 import { handleErrorApi } from "@/lib/utils";
 import { useState } from "react";
+import { useAppContext } from "@/app/AppProvider";
 
 export default function LoginForm() {
+  const { setProfile } = useAppContext();
+
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const form = useForm<LoginBodyType>({
@@ -47,8 +50,10 @@ export default function LoginForm() {
         sessionToken: result.payload.data.token,
         expiresAt: result.payload.data.expiresAt,
       });
+
       router.push("/me");
       router.refresh(); // Re-render Server Component (Header) để đồng bộ sessionToken
+      setProfile(result.payload.data.account);
     } catch (error: any) {
       handleErrorApi({ errors: error, setError: form.setError });
     } finally {
