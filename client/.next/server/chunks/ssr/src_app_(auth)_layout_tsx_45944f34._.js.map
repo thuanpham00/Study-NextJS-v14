@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 7, "column": 0}, "map": {"version":3,"sources":["file:///E:/VS_CODE/NextJS/Study-NextJS-basic/client/src/app/%28auth%29/layout.tsx"],"sourcesContent":["export default function LoginLayout({\r\n  children,\r\n}: Readonly<{\r\n  children: React.ReactNode;\r\n}>) {\r\n  return <main>{children}</main>;\r\n}\r\n"],"names":[],"mappings":";;;;;AAAe,SAAS,YAAY,EAClC,QAAQ,EAGR;IACA,qBAAO,8OAAC;kBAAM;;;;;;AAChB","debugId":null}}]
+}

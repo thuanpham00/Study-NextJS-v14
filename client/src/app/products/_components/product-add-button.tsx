@@ -5,6 +5,7 @@ import React from "react";
 
 export default function ProductAddButton() {
   const isAuthenticated = isClient() && Boolean(localStorage.getItem("sessionToken")); // cần check thêm isClient vì localStorage chỉ có ở client
+  console.log(isAuthenticated);
   if (!isAuthenticated) return null;
   return (
     <Link

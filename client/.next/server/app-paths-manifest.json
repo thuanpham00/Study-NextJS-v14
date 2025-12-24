@@ -1,19 +1,11 @@
 {
+  "/(auth)/login/page": "app/(auth)/login/page.js",
   "/api/auth/logout/route": "app/api/auth/logout/route.js",
-  "/_not-found/page": "app/_not-found/page.js",
   "/api/auth/route": "app/api/auth/route.js",
-  "/robots.txt/route": "app/robots.txt/route.js",
-  "/api/auth/slide-session/route": "app/api/auth/slide-session/route.js",
-  "/apple-icon.png/route": "app/apple-icon.png/route.js",
-  "/icon.png/route": "app/icon.png/route.js",
   "/favicon.ico/route": "app/favicon.ico/route.js",
+  "/me/page": "app/me/page.js",
+  "/products/[id]/edit/page": "app/products/[id]/edit/page.js",
   "/products/[id]/page": "app/products/[id]/page.js",
   "/products/add/page": "app/products/add/page.js",
-  "/products/[id]/edit/page": "app/products/[id]/edit/page.js",
-  "/me/page": "app/me/page.js",
-  "/page": "app/page.js",
-  "/products/page": "app/products/page.js",
-  "/(auth)/logout/page": "app/(auth)/logout/page.js",
-  "/(auth)/register/page": "app/(auth)/register/page.js",
-  "/(auth)/login/page": "app/(auth)/login/page.js"
+  "/products/page": "app/products/page.js"
 }

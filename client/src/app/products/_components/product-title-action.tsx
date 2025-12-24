@@ -1,3 +1,4 @@
+"use client";
 import { TableHead } from "@/components/ui/table";
 import { isClient } from "@/lib/http";
 import React from "react";
